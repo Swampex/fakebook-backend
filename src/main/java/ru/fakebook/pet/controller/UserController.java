@@ -8,7 +8,6 @@ import ru.fakebook.pet.model.User;
 import ru.fakebook.pet.repository.UserRepository;
 import ru.fakebook.pet.security.details.UserDetailsImpl;
 import ru.fakebook.pet.service.UserService;
-import ru.fakebook.pet.transfer.AuthMeDto;
 import ru.fakebook.pet.transfer.UserRs;
 
 import java.util.HashMap;

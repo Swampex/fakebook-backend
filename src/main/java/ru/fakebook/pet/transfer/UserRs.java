@@ -3,6 +3,7 @@ package ru.fakebook.pet.transfer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import ru.fakebook.pet.model.User;
 
 import java.util.Collections;
 import java.util.List;
@@ -14,6 +15,9 @@ public class UserRs {
 
     Integer resultCode;
     List<String> messages;
+    private Long id;
+    private String email;
+    private String login;
 
     public static UserRs getOkRs() {
         return UserRs.builder()
@@ -26,6 +30,16 @@ public class UserRs {
         return UserRs.builder()
                 .resultCode(1)
                 .messages(Collections.singletonList("You are not authorized"))
+                .build();
+    }
+
+    public static UserRs getUserInfoRs(User user) {
+        return UserRs.builder()
+                .login(user.getLogin())
+                .email(user.getEmail())
+                .id(user.getId())
+                .resultCode(0)
+                .messages(Collections.singletonList("Ok"))
                 .build();
     }
 }
