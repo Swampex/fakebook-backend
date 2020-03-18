@@ -3,6 +3,7 @@ package ru.fakebook.pet.transfer;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import org.postgresql.util.PSQLException;
 import ru.fakebook.pet.model.User;
 
 import java.util.Collections;
@@ -23,6 +24,14 @@ public class UserRs {
         return UserRs.builder()
                 .resultCode(0)
                 .messages(Collections.singletonList("Ok"))
+                .build();
+    }
+
+    public static UserRs getExceptionRs(Exception e) {
+        System.out.println("we're in");
+        return UserRs.builder()
+                .resultCode(1)
+                .messages(Collections.singletonList(e.getMessage()))
                 .build();
     }
 

@@ -30,6 +30,7 @@ public class User {
     private String firstName;
     private String email;
 
+    @Column(unique = true)
     private String login;
     private String hashPassword;
 

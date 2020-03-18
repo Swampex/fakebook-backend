@@ -1,5 +1,6 @@
 package ru.fakebook.pet.service;
 
+import org.postgresql.util.PSQLException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ public class SignUpServiceImpl implements SignUpService {
     private UserRepository usersRepository;
 
     @Override
-    public void signUp(UserForm userForm) {
+    public void signUp(UserForm userForm) throws PSQLException {
         String hashPassword = passwordEncoder.encode(userForm.getPassword());
 
         Set<Role> roles = new HashSet<Role>();

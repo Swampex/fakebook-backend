@@ -1,5 +1,6 @@
 package ru.fakebook.pet.service;
 
+import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,11 @@ public class UserService {
         List<User> usersResult = new ArrayList<>();
 
         List<User> allUsers = userRepository.findAll();
+        User currentUser = defineCurrentUser();
+        if(currentUser != null) {
+            allUsers = allUsers.stream()
+                    .filter(u -> !u.getId().equals(currentUser.getId())).collect(Collectors.toList());
+        }
 
         for (int currentPage = 0; currentPage < page; currentPage++) {
             if ( currentPage+1 == page && usersResult.isEmpty()) {
