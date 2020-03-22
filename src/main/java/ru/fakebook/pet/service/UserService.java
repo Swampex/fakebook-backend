@@ -1,13 +1,12 @@
 package ru.fakebook.pet.service;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import ru.fakebook.pet.model.User;
 import ru.fakebook.pet.repository.UserRepository;
 import ru.fakebook.pet.security.details.UserDetailsImpl;
-import ru.fakebook.pet.transfer.UserRs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -62,12 +61,12 @@ public class UserService {
     }
 
     public User defineCurrentUser() {
-        Object user = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-        if (user instanceof String) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth == null
+                || auth.getPrincipal().equals("anonymousUser")) {
             return null;
         }
-        UserDetailsImpl principal = (UserDetailsImpl) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetailsImpl principal = (UserDetailsImpl) auth.getPrincipal();
         return userRepository.getOne(principal.getUser().getId());
     }
 }

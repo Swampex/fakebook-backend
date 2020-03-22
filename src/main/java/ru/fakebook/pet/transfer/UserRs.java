@@ -6,6 +6,7 @@ import lombok.Data;
 import org.postgresql.util.PSQLException;
 import ru.fakebook.pet.model.User;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class UserRs {
     }
 
     public static UserRs getExceptionRs(Exception e) {
-        System.out.println("we're in");
+        System.out.println(Arrays.toString(e.getStackTrace()));
         return UserRs.builder()
                 .resultCode(1)
                 .messages(Collections.singletonList(e.getMessage()))
