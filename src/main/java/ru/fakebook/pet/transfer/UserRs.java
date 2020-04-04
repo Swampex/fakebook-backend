@@ -1,30 +1,34 @@
 package ru.fakebook.pet.transfer;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import org.postgresql.util.PSQLException;
+import lombok.*;
 import ru.fakebook.pet.model.User;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Data
 @AllArgsConstructor
+@RequiredArgsConstructor
 @Builder
 public class UserRs {
 
+    @NonNull
     Integer resultCode;
-    List<String> messages;
+    @NonNull
+    Map<String, String> messages;
     private Long id;
     private String email;
     private String login;
 
-    public static UserRs getOkRs() {
+    public static UserRs getOkRs(Map ...messages) {
+        Map<String, String> rsMessages = new HashMap<>();
+        if (messages.length != 0) {
+            rsMessages.putAll(messages[0]);
+        }
+        rsMessages.put("status", "Ok");
+
         return UserRs.builder()
                 .resultCode(0)
-                .messages(Collections.singletonList("Ok"))
+                .messages(rsMessages)
                 .build();
     }
 
@@ -32,14 +36,14 @@ public class UserRs {
         System.out.println(Arrays.toString(e.getStackTrace()));
         return UserRs.builder()
                 .resultCode(1)
-                .messages(Collections.singletonList(e.getMessage()))
+                .messages(Collections.singletonMap("error", e.getMessage()))
                 .build();
     }
 
     public static UserRs getNotAuthorizedRs() {
         return UserRs.builder()
                 .resultCode(1)
-                .messages(Collections.singletonList("You are not authorized"))
+                .messages(Collections.singletonMap("error", "You are not authorized"))
                 .build();
     }
 
@@ -49,7 +53,7 @@ public class UserRs {
                 .email(user.getEmail())
                 .id(user.getId())
                 .resultCode(0)
-                .messages(Collections.singletonList("Ok"))
+                .messages(Collections.singletonMap("status", "Ok"))
                 .build();
     }
 }

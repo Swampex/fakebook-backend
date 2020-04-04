@@ -48,9 +48,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000", "https://swampex.github.io"));
         configuration.setAllowCredentials(true);
-        configuration.setAllowedMethods(Arrays.asList("GET","DELETE","POST","PUT","OPTIONS"));
+        configuration.setAllowedMethods(Arrays.asList("GET","DELETE","PATCH","POST","PUT","OPTIONS"));
+        configuration.setAllowedHeaders(Arrays.asList("authorization", "content-type", "x-auth-token"));
+        configuration.setExposedHeaders(Arrays.asList("x-auth-token"));
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
@@ -59,25 +61,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-//                .cors()
-//                    .and()
-                .headers()
-                    .addHeaderWriter(new StaticHeadersWriter
-                            ("Access-Control-Allow-Origin","http://localhost:3000"))
-                    .addHeaderWriter(new StaticHeadersWriter
-                            ("Access-Control-Allow-Credentials","true"))
+                .cors()
                     .and()
+//                .headers()
+//                    .addHeaderWriter(new StaticHeadersWriter
+//                            ("Access-Control-Allow-Origin","http://localhost:3000"))
+//                    .addHeaderWriter(new StaticHeadersWriter
+//                            ("Access-Control-Allow-Credentials","true"))
+//                    .and()
                 .authorizeRequests()
                 .antMatchers("/login**").permitAll()
                     .and()
-                    .formLogin()
+                .formLogin()
                 .usernameParameter("login")
                 .defaultSuccessUrl("/profile")
                 .loginPage("/login")
                 .successHandler(customAuthenticationSuccessHandler())
                 .failureHandler(customAuthenticationFailureHandler())
                     .and()
-                    .logout()
+                .logout()
                 .invalidateHttpSession(true)
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login")

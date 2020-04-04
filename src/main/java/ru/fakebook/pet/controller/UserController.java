@@ -3,6 +3,8 @@ package ru.fakebook.pet.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import ru.fakebook.pet.model.Photos;
 import ru.fakebook.pet.model.Profile;
 import ru.fakebook.pet.model.User;
 import ru.fakebook.pet.repository.UserRepository;
@@ -10,6 +12,7 @@ import ru.fakebook.pet.security.details.UserDetailsImpl;
 import ru.fakebook.pet.service.UserService;
 import ru.fakebook.pet.transfer.UserRs;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -105,5 +108,20 @@ public class UserController {
         currentUser.setStatus(body.get("status"));
         userRepository.save(currentUser);
         return UserRs.getOkRs();
+    }
+
+    @PutMapping("profile/photo")
+    public UserRs addPhoto(@RequestParam("file") MultipartFile file) {
+
+        User currentUser = userService.defineCurrentUser();
+        if (currentUser == null) return UserRs.getNotAuthorizedRs();
+        String photoLocation = FileController.uploadToLocalFileSystem(file).getBody().toString();
+
+        Photos photos = Photos.builder()
+                .photo_large(photoLocation).build();
+        currentUser.getProfile().setPhotos(photos);
+        userRepository.save(currentUser);
+
+        return UserRs.getOkRs(Collections.singletonMap("filePath", photoLocation));
     }
 }

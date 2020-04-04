@@ -34,9 +34,6 @@ public class User {
     private String login;
     private String hashPassword;
 
-    @Column(length = 1000)
-    private String photo;
-
     private String status;
 
     @Embedded
