@@ -22,7 +22,6 @@ import javax.persistence.Embeddable;
         @AttributeOverride(name = "url_instagram", column = @Column(name = "url_instagram"))
 })
 public class Contacts {
-
     private String url_github;
     private String url_vk;
     private String url_facebook;

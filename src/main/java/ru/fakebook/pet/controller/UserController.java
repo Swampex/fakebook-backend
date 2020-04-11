@@ -1,14 +1,11 @@
 package ru.fakebook.pet.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import ru.fakebook.pet.model.Photos;
-import ru.fakebook.pet.model.Profile;
 import ru.fakebook.pet.model.User;
 import ru.fakebook.pet.repository.UserRepository;
-import ru.fakebook.pet.security.details.UserDetailsImpl;
 import ru.fakebook.pet.service.UserService;
 import ru.fakebook.pet.transfer.UserRs;
 
@@ -83,8 +80,8 @@ public class UserController {
 
         follower.setFollows(
                 follower.getFollows().stream()
-                .filter( followedUser ->  !id.equals( followedUser.getId() ) )
-                .collect(Collectors.toList())
+                        .filter(followedUser -> !id.equals(followedUser.getId()))
+                        .collect(Collectors.toList())
         );
 
         userRepository.save(follower);
@@ -123,5 +120,16 @@ public class UserController {
         userRepository.save(currentUser);
 
         return UserRs.getOkRs(Collections.singletonMap("filePath", photoLocation));
+    }
+
+    @PostMapping("user/save")
+    public UserRs signUpJacksonUser(@RequestBody User user) {
+        user.getProfile().setUser(user);
+        try {
+            userRepository.save(user);
+        } catch (Exception e) {
+            return UserRs.getExceptionRs(e);
+        }
+        return UserRs.getOkRs();
     }
 }
