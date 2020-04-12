@@ -4,6 +4,7 @@ package ru.fakebook.pet.security.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -12,12 +13,15 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
 import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.security.web.header.writers.StaticHeadersWriter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import ru.fakebook.pet.filters.CaptchaFilter;
 import ru.fakebook.pet.security.CustomAuthenticationFailureHandler;
 import ru.fakebook.pet.security.CustomUrlAuthenticationSuccessHandler;
 import ru.fakebook.pet.security.details.UserDetailsServiceImpl;
@@ -58,17 +62,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         return source;
     }
 
+    @Bean( name="myAuthenticationManager")
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
+    }
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
+                .addFilterBefore(new CaptchaFilter(), UsernamePasswordAuthenticationFilter.class)
                 .cors()
                     .and()
-//                .headers()
-//                    .addHeaderWriter(new StaticHeadersWriter
-//                            ("Access-Control-Allow-Origin","http://localhost:3000"))
-//                    .addHeaderWriter(new StaticHeadersWriter
-//                            ("Access-Control-Allow-Credentials","true"))
-//                    .and()
                 .authorizeRequests()
                 .antMatchers("/login**").permitAll()
                     .and()
@@ -85,7 +90,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .logoutSuccessUrl("/login")
                     .and()
                 .rememberMe()
-                .rememberMeParameter("remember-me")
+                .rememberMeParameter("rememberMe")
                 .tokenRepository(tokenRepository());
         http.csrf().disable();
     }
